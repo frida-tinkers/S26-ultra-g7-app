@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Galaxy S26 Ultra – Dexcom Follow walkthrough</title>
+<style>
+:root{
+  --bg:#eef0f3; --fg:#1a1d22; --muted:#596170; --card:#ffffff; --line:#d5d9e0; --accent:#0b7a55; --accent-fg:#ffffff;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#121417; --fg:#e8ebf0; --muted:#98a1ae; --card:#1c1f24; --line:#32363d; --accent:#4ec28f; --accent-fg:#0c1a13; color-scheme: dark; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.45}
+.wrap{max-width:980px;margin:0 auto;padding:16px;display:flex;flex-wrap:wrap;gap:24px;justify-content:center;align-items:flex-start}
+.scaler{flex:none}
+.coach{flex:1 1 280px;max-width:380px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.coach h1{font-size:18px;margin:0 0 4px;font-weight:650}
+.coach .sub{color:var(--muted);font-size:13px;margin:0 0 14px}
+.coach h2{font-size:14px;margin:14px 0 4px;font-weight:650}
+.coach p{margin:0;font-size:14px}
+.coach .btns{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.coach button{font:inherit;font-size:14px;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer}
+.coach button.pri{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.coach button:focus-visible,.screen :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.coach .note{margin-top:16px;padding-top:12px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+
+.phone{width:380px;height:800px;background:#0b0b0d;border-radius:46px;padding:10px;transform-origin:top left;box-shadow:0 0 0 2px #2a2c31 inset}
+.screen{position:relative;width:100%;height:100%;border-radius:37px;overflow:hidden;display:flex;flex-direction:column;background:#fff;color:#111;font-family:Roboto,"Segoe UI",system-ui,sans-serif;font-size:15px}
+.screen.dk{color:#fff}
+.hole{position:absolute;top:10px;left:50%;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:#000;z-index:5}
+.status{height:34px;flex:none;display:flex;justify-content:space-between;align-items:center;padding:6px 26px 0;font-size:12.5px;font-weight:600;z-index:4;position:relative}
+.status .r{display:flex;gap:6px;align-items:center}
+.status .batt{width:20px;height:10px;border:1.5px solid currentColor;border-radius:3px;position:relative}
+.status .batt::after{content:"";position:absolute;left:1px;top:1px;bottom:1px;width:70%;background:currentColor;border-radius:1px}
+.body{flex:1;overflow-y:auto;position:relative;min-height:0}
+.nav{height:46px;flex:none;display:flex;justify-content:space-around;align-items:center;padding:0 40px}
+.nav button{background:none;border:0;color:inherit;opacity:.8;width:60px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px}
+.nav .hm{width:16px;height:16px;border:2px solid currentColor;border-radius:50%}
+.nav .rc{display:flex;gap:3px}.nav .rc i{display:block;width:2px;height:14px;background:currentColor;border-radius:1px}
+
+.home{background:linear-gradient(165deg,#2b4a6b 0%,#5a3d7a 55%,#c4607a 100%)}
+.home .body{padding:18px 18px 0;display:flex;flex-direction:column}
+.clock{margin:26px 0 30px}
+.clock .t{font-size:64px;font-weight:300;letter-spacing:-1px;line-height:1}
+.clock .d{font-size:15px;opacity:.9;margin-top:6px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 8px}
+.app{background:none;border:0;color:inherit;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11.5px;cursor:pointer;padding:0}
+.ico{width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;font-weight:700}
+.dock{margin-top:auto;margin-bottom:12px;background:rgba(255,255,255,.18);border-radius:26px;padding:12px 10px;display:grid;grid-template-columns:repeat(4,1fr)}
+.dock .app{font-size:0}
+
+.bar{padding:6px 18px 10px;display:flex;align-items:center;gap:10px}
+.bar h3{margin:0;font-size:21px;font-weight:600;flex:1}
+.bar .ib{background:none;border:0;font-size:20px;cursor:pointer;color:inherit;padding:4px 8px}
+.big{font-size:32px;font-weight:500;padding:34px 22px 14px;margin:0;line-height:1.15}
+.row{display:flex;align-items:center;gap:14px;padding:14px 22px;width:100%;background:none;border:0;border-bottom:1px solid #eceef1;text-align:left;color:inherit;font:inherit;cursor:pointer}
+.row .tx{flex:1;min-width:0}
+.row .tt{font-size:16px}
+.row .ss{font-size:12.5px;color:#6b7280;margin-top:1px}
+.row .chev{color:#9aa0a8;font-size:18px}
+.row.static{cursor:default}
+.sect{padding:16px 22px 6px;font-size:13px;color:#0a6bd6;font-weight:600}
+.tg{width:44px;height:24px;border-radius:12px;background:#b9bec6;position:relative;flex:none;transition:background .15s}
+.tg::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .15s}
+.tg.on{background:#2f7cf6}.tg.on::after{left:23px}
+.card{margin:10px 16px;background:#f3f4f6;border-radius:20px;overflow:hidden}
+.card .row:last-child{border-bottom:0}
+.btn{display:block;margin:18px 22px;padding:14px;border-radius:26px;border:0;background:#0b7a55;color:#fff;font:inherit;font-weight:600;text-align:center;cursor:pointer;width:calc(100% - 44px)}
+.btn.sec{background:#e6f3ed;color:#0b5c40}
+.warn{margin:10px 16px;padding:12px 14px;border-radius:14px;background:#fff4e0;color:#7a4a00;font-size:13px}
+.field{margin:10px 22px}
+.field label{display:block;font-size:12.5px;color:#6b7280;margin-bottom:4px}
+.field input{width:100%;font:inherit;padding:12px;border:1px solid #c9ced6;border-radius:10px;background:#fff;color:#111}
+.para{padding:6px 22px;font-size:14px;color:#3a4049}
+.toast{position:absolute;left:20px;right:20px;bottom:64px;background:#222;color:#fff;padding:12px 16px;border-radius:14px;font-size:13.5px;z-index:6;text-align:center}
+.g7mark{width:30px;height:30px;border-radius:50%;background:#0b7a55;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.av{width:42px;height:42px;border-radius:50%;background:#dbe9e3;color:#0b5c40;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:17px}
+.sharer{margin:10px 16px;border:1px solid #e3e6ea;border-radius:18px;padding:14px;display:flex;align-items:center;gap:14px;width:calc(100% - 32px);background:#fff;font:inherit;color:inherit;cursor:pointer;text-align:left}
+.sharer .v{margin-left:auto;text-align:right}
+.sharer .v b{font-size:34px;font-weight:400;display:block;line-height:1}
+.sharer .v span{font-size:12px;color:#6b7280}
+.graph{margin:10px 16px;border:1px solid #e3e6ea;border-radius:16px;padding:8px}
+.mail{border-bottom:1px solid #eceef1;padding:12px 22px;display:flex;gap:12px;width:100%;background:none;border-left:0;border-right:0;border-top:0;font:inherit;text-align:left;color:inherit;cursor:pointer}
+.mail .s{font-weight:600;font-size:14px}.mail .p{font-size:13px;color:#6b7280}
+.letter{padding:6px 22px;font-size:14px;color:#2b2f36}
+.letter h4{margin:0 0 8px;font-size:17px}
+.linkbtn{display:inline-block;margin:14px 0;padding:11px 20px;border-radius:22px;background:#0b7a55;color:#fff;font:inherit;font-weight:600;border:0;cursor:pointer}
+.viewfinder{background:#000;flex:1;display:flex;align-items:flex-end;justify-content:center;padding-bottom:40px}
+.shutter{width:64px;height:64px;border-radius:50%;border:4px solid #fff;background:none}
+.opt{width:20px;height:20px;border-radius:50%;border:2px solid #9aa0a8;display:flex;align-items:center;justify-content:center}
+.opt.on{border-color:#2f7cf6}.opt.on i{width:10px;height:10px;border-radius:50%;background:#2f7cf6;display:block}
+@media (prefers-reduced-motion: reduce){.tg,.tg::after{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="scaler" id="scaler">
+    <div class="phone" id="phone">
+      <div class="screen" id="screen"></div>
+    </div>
+  </div>
+  <aside class="coach" aria-live="polite">
+    <h1>Galaxy S26 Ultra · Dexcom Follow</h1>
+    <p class="sub">This is the follower's phone, such as a spouse or parent.</p>
+    <h2 id="ct"></h2>
+    <p id="cx"></p>
+    <div class="btns">
+      <button class="pri" id="bHome">Go to home screen</button>
+      <button id="bReset">Start over</button>
+    </div>
+    <p class="note">Draft built from Dexcom's public help pages and hospital leaflets, not from live app screenshots. Screen wording and layout may differ from the current Follow app, so compare against the real app before training with it.</p>
+  </aside>
+</div>
+
+<script>
+const fresh = () => ({
+  screen:'home', stack:[],
+  notif:true, dnd:false, batt:'Optimized',
+  signed:false, accepted:false,
+  low:true, high:true, soon:true, loss:true,
+  email:'', pw:'', toast:''
+});
+let S = fresh();
+let toastTimer = null;
+const SHARER = 'Alex';
+
+const COACH = {
+  home:['Home screen','The follower starts from the invitation email. Open Email to find it, or open Settings to check the phone.'],
+  camera:['Camera','Placeholder app. Use the back button to return.'],
+  notes:['Notes','Placeholder app. Use the back button to return.'],
+  mail:['Email inbox','The invitation from the Dexcom user is the top message.'],
+  'mail-open':['Invitation email','The follower taps the accept link in the email. They also need the Follow app installed, which the email links to.'],
+  'f-region':['Follow app: choose region','First time in the Follow app, the follower picks their country or region.'],
+  'f-signin':['Follow app: sign in','The follower signs in or creates their own Dexcom account. It is separate from the user\'s account.'],
+  'f-accept':['Follow app: accept','After signing in, the follower sees the invitation and taps Start Following.'],
+  'f-list':['Follow app: home','Shows each person being followed with their latest reading. Tap a person for the graph, or the gear for alert settings.'],
+  'f-detail':['Follow app: reading','Graph and latest reading for the person being followed. Followers should confirm readings in the user\'s G7 app before treatment decisions.'],
+  'f-settings':['Follow app: alerts','Once accepted, the follower can change which alerts they get.'],
+  set:['Android Settings','Notifications, Do Not Disturb, and the battery setting for the Follow app can all stop alerts from showing up.'],
+  'set-apps':['Settings: Apps','Find Dexcom Follow in the list.'],
+  'set-app':['App info: Dexcom Follow','Notifications must be allowed for alerts to appear.'],
+  'set-app-batt':['App battery setting','Unrestricted is the safest choice. Optimized or Restricted can delay alerts.'],
+  'set-notif':['Settings: Do Not Disturb','If Do Not Disturb is on, alerts can be silenced.']
+};
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const tg = (on, act) => `<span class="tg ${on?'on':''}" role="switch" aria-checked="${on}" tabindex="0" data-act="${act}"></span>`;
+function go(name){ S.stack.push(S.screen); S.screen = name; render(); }
+function back(){ S.screen = S.stack.length ? S.stack.pop() : 'home'; render(); }
+function toast(msg){ S.toast = msg; clearTimeout(toastTimer); toastTimer = setTimeout(()=>{ S.toast=''; render(); }, 2600); }
+const rowNav = (l,s,g) => `<button class="row" data-go="${g}"><div class="tx"><div class="tt">${l}</div>${s?`<div class="ss">${s}</div>`:''}</div><span class="chev">›</span></button>`;
+const rowTg = (l,s,on,a) => `<div class="row static"><div class="tx"><div class="tt">${l}</div>${s?`<div class="ss">${s}</div>`:''}</div>${tg(on,a)}</div>`;
+const appBar = (t, extra='') => `<div class="bar"><h3>${t}</h3>${extra}</div>`;
+
+function warnings(){
+  const w=[];
+  if(!S.notif) w.push('Notifications are off for the Follow app. You won\'t see alerts.');
+  if(S.dnd) w.push('Do Not Disturb is on. Alerts may be silenced.');
+  if(S.batt!=='Unrestricted') w.push('Battery limits on this phone can delay alerts. Set the Follow app battery to Unrestricted.');
+  return w.map(t=>`<div class="warn">${t}</div>`).join('');
+}
+
+function homeScreen(){
+  const d = new Date();
+  const time = d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}).replace(/\s?(AM|PM)/i,'');
+  const date = d.toLocaleDateString([], {weekday:'long',month:'long',day:'numeric'});
+  const ap = (ic,bg,lb,g,a) => `<button class="app" ${a?`data-act="${a}"`:`data-go="${g}"`}><div class="ico" style="background:${bg}">${ic}</div>${lb}</button>`;
+  return `<div class="clock"><div class="t">${time}</div><div class="d">${date}</div></div>
+    <div class="grid">
+      ${ap('F','#0b7a55','Dexcom Follow','', 'open-follow')}
+      ${ap('✉','#e58a00','Email','mail')}
+      ${ap('⚙','#5b6b7d','Settings','set')}
+      ${ap('📝','#e5a400','Notes','notes')}
+      ${ap('🛍','#2f7cf6','Play Store','', 'todo')}
+      ${ap('🖼','#e0568a','Gallery','', 'todo')}
+    </div>
+    <div class="dock">
+      ${ap('📞','#34a853','Phone','', 'todo')}
+      ${ap('💬','#2f7cf6','Messages','', 'todo')}
+      ${ap('📷','#e5483a','Camera','camera')}
+      ${ap('🌐','#6b52d9','Internet','', 'todo')}
+    </div>`;
+}
+
+function mailInbox(){
+  return `${appBar('Inbox')}
+    <button class="mail" data-go="mail-open"><div class="av">${SHARER[0]}</div><div><div class="s">Dexcom</div><div class="s" style="font-weight:500">${SHARER} invited you to follow</div><div class="p">Tap to accept the invitation…</div></div></button>
+    <div class="mail" style="cursor:default"><div class="av" style="background:#e6e9f5;color:#33408a">S</div><div><div class="s">Store receipt</div><div class="p">Thanks for your order…</div></div></div>`;
+}
+function mailOpen(){
+  return `${appBar('Message')}
+    <div class="letter">
+      <h4>${SHARER} invited you to follow</h4>
+      <p>${SHARER} would like to share their glucose readings with you using Dexcom Share. To see them, you need the Dexcom Follow app.</p>
+      <button class="linkbtn" data-act="accept-link">Accept invitation</button>
+      <p style="font-size:12.5px;color:#6b7280">Don't have the Follow app yet? Download it from the Play Store.</p>
+    </div>`;
+}
+
+function fRegion(){
+  const o = (n,on) => `<div class="row static"><div class="tx"><div class="tt">${n}</div></div><span class="opt ${on?'on':''}"><i></i></span></div>`;
+  return `${appBar('Select your region')}
+    <div class="para">Choose the country or region where your account is.</div>
+    ${o('United States',true)}${o('Canada',false)}${o('United Kingdom',false)}
+    <button class="btn" data-act="region-next">Continue</button>`;
+}
+function fSignin(){
+  return `${appBar('Sign in')}
+    <div class="para">Use your own Dexcom account. If you don't have one, create one first.</div>
+    <div class="field"><label for="in-email">Email</label><input id="in-email" data-in="email" type="email" value="${esc(S.email)}" autocomplete="off"></div>
+    <div class="field"><label for="in-pw">Password</label><input id="in-pw" data-in="pw" type="password" value="${esc(S.pw)}" autocomplete="off"></div>
+    <button class="btn" data-act="signin">Sign in</button>`;
+}
+function fAccept(){
+  return `${appBar('Invitation')}
+    <div style="text-align:center;padding:30px 22px 6px"><div class="av" style="margin:0 auto 12px;width:64px;height:64px;font-size:26px">${SHARER[0]}</div><div style="font-size:18px">${SHARER} invited you to follow</div></div>
+    <div class="para" style="text-align:center">You'll see ${SHARER}'s glucose readings and can choose which alerts you get.</div>
+    <button class="btn" data-act="start-following">Start Following</button>`;
+}
+const PTS = '10,62 40,58 70,55 100,52 130,50 160,48 190,50 220,49 250,47 280,46';
+function fList(){
+  const gear = `<button class="ib" data-go="f-settings" aria-label="Alert settings">⚙</button>`;
+  if(!S.accepted){
+    return `${appBar('Dexcom Follow', gear)}${warnings()}
+      <div class="para" style="padding-top:30px;text-align:center">You're not following anyone yet. Open the invitation email and tap Accept invitation.</div>`;
+  }
+  return `${appBar('Dexcom Follow', gear)}${warnings()}
+    <button class="sharer" data-go="f-detail"><div class="av">${SHARER[0]}</div><div><div style="font-size:17px">${SHARER}</div><div style="font-size:12.5px;color:#0b7a55">→ Steady</div></div><div class="v"><b>112</b><span>mg/dL · just now</span></div></button>`;
+}
+function fDetail(){
+  return `${appBar(SHARER)}
+    <div style="text-align:center;padding:8px 0"><div style="font-size:84px;font-weight:300;line-height:1;letter-spacing:-2px">112</div><div style="font-size:13px;color:#6b7280">mg/dL</div><div style="color:#0b7a55;margin-top:8px">→ Steady</div></div>
+    <div class="graph"><svg viewBox="0 0 290 110" width="100%" role="img" aria-label="Glucose graph, steady in range">
+      <rect x="0" y="25" width="290" height="60" fill="#e4f3ec"/>
+      <line x1="0" y1="25" x2="290" y2="25" stroke="#9fd2bb" stroke-dasharray="3 3"/>
+      <line x1="0" y1="85" x2="290" y2="85" stroke="#9fd2bb" stroke-dasharray="3 3"/>
+      <polyline points="${PTS}" fill="none" stroke="#0b7a55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="para" style="text-align:center;font-size:12.5px;color:#6b7280">Confirm readings in the Dexcom G7 app before making treatment decisions.</div>`;
+}
+function fSettings(){
+  return `${appBar('Alerts for '+SHARER)}
+    <div class="card">
+      ${rowTg('Urgent Low Soon','Alert when a very low is predicted',S.soon,'tg-soon')}
+      ${rowTg('Low','Alert when glucose is low',S.low,'tg-low')}
+      ${rowTg('High','Alert when glucose is high',S.high,'tg-high')}
+      ${rowTg('Signal loss','Alert when readings stop',S.loss,'tg-loss')}
+    </div>
+    ${S.accepted?'':'<div class="para" style="color:#6b7280">You can change these after you accept an invitation.</div>'}`;
+}
+
+function sRow(ic,bg,t,s,g){ return `<button class="row" data-go="${g}"><div class="ico" style="width:36px;height:36px;border-radius:50%;font-size:17px;background:${bg}">${ic}</div><div class="tx"><div class="tt">${t}</div><div class="ss">${s}</div></div></button>`; }
+function setHome(){
+  return `<h2 class="big">Settings</h2>
+    ${sRow('🔔','#e5483a','Notifications & Do Not Disturb',S.dnd?'Do Not Disturb is on':'Do Not Disturb is off','set-notif')}
+    ${sRow('▦','#7b61ff','Apps','Default apps, app settings','set-apps')}`;
+}
+function setNotif(){ return `<h2 class="big">Do Not Disturb</h2><div class="card">${rowTg('Do Not Disturb','Silence calls and notifications',S.dnd,'tg-dnd')}</div>`; }
+function setApps(){
+  return `<h2 class="big">Apps</h2>
+    <button class="row" data-go="set-app"><div class="g7mark">F</div><div class="tx"><div class="tt">Dexcom Follow</div></div></button>
+    <div class="row static"><div class="ico" style="width:36px;height:36px;border-radius:10px;font-size:18px;background:#e58a00">✉</div><div class="tx"><div class="tt">Email</div></div></div>`;
+}
+function setApp(){
+  return `<h2 class="big">Dexcom Follow</h2><div class="card">
+    ${rowTg('Notifications', S.notif?'Allowed':'Off', S.notif,'tg-notif')}
+    ${rowNav('Battery', S.batt,'set-app-batt')}</div>`;
+}
+function setAppBatt(){
+  const opt = (n,d) => `<button class="row" data-act="batt" data-val="${n}"><div class="tx"><div class="tt">${n}</div><div class="ss">${d}</div></div><span class="opt ${S.batt===n?'on':''}"><i></i></span></button>`;
+  return `<h2 class="big">Battery</h2>
+    ${opt('Unrestricted','No limits on background use. Uses more battery.')}
+    ${opt('Optimized','Limits background use based on how you use the app.')}
+    ${opt('Restricted','Limits background use. Alerts may be delayed.')}`;
+}
+
+function body(){
+  switch(S.screen){
+    case 'home': return homeScreen();
+    case 'camera': return `<div class="viewfinder"><button class="shutter" aria-label="Take photo"></button></div>`;
+    case 'notes': return `<h2 class="big">Notes</h2><div class="card"><div class="row static"><div class="tx"><div class="tt">Grocery list</div><div class="ss">Eggs, spinach, coffee</div></div></div></div>`;
+    case 'mail': return mailInbox();
+    case 'mail-open': return mailOpen();
+    case 'f-region': return fRegion();
+    case 'f-signin': return fSignin();
+    case 'f-accept': return fAccept();
+    case 'f-list': return fList();
+    case 'f-detail': return fDetail();
+    case 'f-settings': return fSettings();
+    case 'set': return setHome();
+    case 'set-notif': return setNotif();
+    case 'set-apps': return setApps();
+    case 'set-app': return setApp();
+    case 'set-app-batt': return setAppBatt();
+  }
+  return '';
+}
+
+function render(){
+  const dark = (S.screen==='home' || S.screen==='camera');
+  const sc = $('#screen');
+  const now = new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}).replace(/\s?(AM|PM)/i,'');
+  sc.className = 'screen ' + (dark?'dk ':'') + (S.screen==='home'?'home':'');
+  sc.style.background = S.screen==='camera' ? '#000' : '';
+  sc.innerHTML = `<div class="hole"></div>
+    <div class="status"><span>${now}</span><span class="r"><span>5G</span><span>▂▄▆</span><span class="batt"></span></span></div>
+    <div class="body">${body()}</div>
+    <div class="nav" style="${dark?'':'background:#fff'}">
+      <button data-act="recents" aria-label="Recent apps"><span class="rc"><i></i><i></i><i></i></span></button>
+      <button data-act="home" aria-label="Home"><span class="hm"></span></button>
+      <button data-act="back" aria-label="Back">‹</button>
+    </div>
+    ${S.toast?`<div class="toast" role="status">${esc(S.toast)}</div>`:''}`;
+  const c = COACH[S.screen] || ['',''];
+  $('#ct').textContent = c[0]; $('#cx').textContent = c[1];
+}
+
+function act(a, el){
+  switch(a){
+    case 'back': back(); return;
+    case 'home': S.stack=[]; S.screen='home'; render(); return;
+    case 'recents': return;
+    case 'todo': toast('Not built in this draft yet.'); render(); return;
+    case 'open-follow':
+      if(S.accepted){ go('f-list'); } else if(S.signed){ go('f-list'); } else { go('f-region'); }
+      return;
+    case 'accept-link': if(S.signed){ go('f-accept'); } else { go('f-region'); } return;
+    case 'region-next': S.screen='f-signin'; break;
+    case 'signin':
+      if(!/^\S+@\S+\.\S+$/.test(S.email.trim())){ toast('Enter a valid email address.'); break; }
+      if(!S.pw){ toast('Enter your password.'); break; }
+      S.signed=true;
+      S.screen = 'f-accept'; break;
+    case 'start-following': S.accepted=true; S.stack=[]; S.screen='f-list'; toast('You are now following '+SHARER+'.'); break;
+    case 'tg-notif': S.notif=!S.notif; break;
+    case 'tg-dnd': S.dnd=!S.dnd; break;
+    case 'tg-low': S.low=!S.low; break;
+    case 'tg-high': S.high=!S.high; break;
+    case 'tg-soon': S.soon=!S.soon; break;
+    case 'tg-loss': S.loss=!S.loss; break;
+    case 'batt': S.batt = el.dataset.val; break;
+  }
+  render();
+}
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-act],[data-go]');
+  if(!t) return;
+  if(t.dataset.go){ go(t.dataset.go); return; }
+  act(t.dataset.act, t);
+});
+document.addEventListener('keydown', e => {
+  if((e.key==='Enter'||e.key===' ') && e.target.matches('.tg')){ e.preventDefault(); act(e.target.dataset.act, e.target); }
+});
+document.addEventListener('input', e => { if(e.target.dataset.in){ S[e.target.dataset.in] = e.target.value; } });
+$('#bHome').onclick = () => act('home');
+$('#bReset').onclick = () => { S = fresh(); render(); };
+
+function fit(){
+  const k = Math.min(1, (window.innerWidth - 32) / 380);
+  $('#phone').style.transform = `scale(${k})`;
+  $('#scaler').style.width = (380*k)+'px';
+  $('#scaler').style.height = (800*k)+'px';
+}
+window.addEventListener('resize', fit);
+fit(); render();
+</script>
+</body>
+</html>
